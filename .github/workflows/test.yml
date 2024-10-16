@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        language: [sh, py, c, cpp]
+        language: [sh, py, c, cpp, js]
 
     steps:
     - name: Checkout repository
@@ -31,6 +31,14 @@ jobs:
         sudo apt update
         sudo apt install -y build-essential
 
+    - name: Install Node js
+      if: matrix.language == 'js'
+      run: |
+        sudo apt update
+        sudo apt install curl
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+        sudo apt install -y nodejs
+        
     - name: Run Hello World Script
       run: |
         [ -d ${{ matrix.language }} ] || exit 0
@@ -51,6 +59,10 @@ jobs:
           cpp)
             make
             output=$(./hello)
+            ;;
+          js)
+            make
+            output=$(node script.js)
             ;;
         esac
 
